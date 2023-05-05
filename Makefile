@@ -24,5 +24,5 @@ bindata.go: $(BINDATA)
 	@echo "+++ bindata.go created"
 
 $(BINDATA):
-	env GOBIN= go get github.com/kevinburke/go-bindata/v4/go-bindata@latest
+	env GOBIN= go install github.com/kevinburke/go-bindata/v4/go-bindata@latest
 
