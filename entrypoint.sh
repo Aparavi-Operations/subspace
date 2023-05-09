@@ -87,11 +87,17 @@ echo "" >/etc/resolv.conf
 # Set DNS servers
 echo ${SUBSPACE_NAMESERVERS} | tr "," "\n" | while read -r ns; do echo "nameserver ${ns}" >>/etc/resolv.conf; done
 
-if [ -z "${SUBSPACE_DISABLE_MASQUERADE-}" ]; then
+if [ -z "${SUBSPACE_DISABLE_SNAT-}" ]; then
   if [[ ${SUBSPACE_IPV4_NAT_ENABLED} -ne 0 ]]; then
     # IPv4
-    if ! /sbin/iptables-nft -t nat --check POSTROUTING -s ${SUBSPACE_IPV4_POOL} -j MASQUERADE; then
-      /sbin/iptables-nft -t nat --append POSTROUTING -s ${SUBSPACE_IPV4_POOL} -j MASQUERADE
+    if [ "${SUBSPACE_POSTROUTING_RULE}" = "MASQUERADE" ]; then
+      if ! /sbin/iptables-nft -t nat --check POSTROUTING -s ${SUBSPACE_IPV4_POOL} -j MASQUERADE; then
+        /sbin/iptables-nft -t nat --append POSTROUTING -s ${SUBSPACE_IPV4_POOL} -j MASQUERADE
+      fi
+    elif [ "${SUBSPACE_POSTROUTING_RULE}" = "SNAT" ]; then
+      if ! /sbin/iptables-nft -t nat --check POSTROUTING -s ${SUBSPACE_IPV4_POOL} -j SNAT --to-source ${SUBSPACE_IPV4_SNAT_SOURCE}; then
+        /sbin/iptables-nft -t nat --append POSTROUTING -s ${SUBSPACE_IPV4_POOL} -j SNAT --to-source ${SUBSPACE_IPV4_SNAT_SOURCE}
+      fi
     fi
 
     if ! /sbin/iptables-nft --check FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT; then
