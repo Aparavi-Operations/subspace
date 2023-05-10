@@ -119,6 +119,8 @@ $ subspace --http-host subspace.example.com
 
 | variable                    | default             | description                                                                                                                                          |
 |-----------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `SUBSPACE_IPV4_PREF`        | `10.99.97.`         | IPv4 Network preference                                                                                                                              |
+| `SUBSPACE_IPV6_PREF`        | `fd00::10:97:`      | IPv6 Network preference                                                                                                                              |
 | `SUBSPACE_IPV4_POOL`        | `10.99.97.0/24`     | IPv4 Subnet to use as WireGuard subnet                                                                                                               |
 | `SUBSPACE_IPV6_POOL`        | `fd00::10:97:0/112` | IPv6 Subnet to use as WireGuard subnet                                                                                                               |
 | `SUBSPACE_NAMESERVERS`      | `1.1.1.1,1.0.0.1`   | Nameservers to use, by-default those of Cloudflare.                                                                                                  |
@@ -201,7 +203,10 @@ docker create \
     --env SUBSPACE_NAMESERVERS="1.1.1.1,8.8.8.8" \
     # Optional variable to change WireGuard Listenport
     --env SUBSPACE_LISTENPORT="51820" \
-  # Optional variables to change IPv4/v6 prefixes
+    # Optional variable to change IPv4/6 Network preference
+    --env SUBSPACE_IPV4_PREF="10.99.97." \
+    --env SUBSPACE_IPV6_PREF="fd00::10:97:" \
+    # Optional variables to change IPv4/v6 prefixes
     --env SUBSPACE_IPV4_POOL="10.99.97.0/24" \
     --env SUBSPACE_IPV6_POOL="fd00::10:97:0/64" \
     # Optional variables to change IPv4/v6 Gateway
@@ -209,8 +214,8 @@ docker create \
     --env SUBSPACE_IPV6_GW="fd00::10:97:1" \
     # Optional variable to enable or disable IPv6 NAT
     --env SUBSPACE_IPV6_NAT_ENABLED=1 \
-  # Optional variable to disable DNS server. Enabled by default.
-  # consider disabling DNS server, if supporting international VPN clients
+    # Optional variable to disable DNS server. Enabled by default.
+    # consider disabling DNS server, if supporting international VPN clients
     --env SUBSPACE_DISABLE_DNS=0 \
     # Optional variable to change PersistentKeepalive
     --env SUBSPACE_PERSISTENT_KEEPALIVE=20 \
@@ -243,11 +248,19 @@ services:
     - SUBSPACE_HTTP_ADDR=":80"
     - SUBSPACE_NAMESERVERS=1.1.1.1,8.8.8.8
     - SUBSPACE_LISTENPORT=51820
+
+    - SUBSPACE_IPV4_PREF=10.99.97.
     - SUBSPACE_IPV4_POOL=10.99.97.0/24
-    - SUBSPACE_IPV6_POOL=fd00::10:97:0/64
     - SUBSPACE_IPV4_GW=10.99.97.1
+    - SUBSPACE_IPV4_NAT_ENABLED=1
+    - SUBSPACE_POSTROUTING_RULE=MASQUERADE # MASQUERADE or SNAT
+    - SUBSPACE_IPV4_SNAT_SOURCE=101.11.111.11 # if SUBSPACE_POSTROUTING_RULE=SNAT, specify the external ip address
+
+    - 'SUBSPACE_IPV6_PREF=fd00::10:97:'
+    - SUBSPACE_IPV6_POOL=fd00::10:97:0/64
     - SUBSPACE_IPV6_GW=fd00::10:97:1
     - SUBSPACE_IPV6_NAT_ENABLED=1
+
     - SUBSPACE_DISABLE_DNS=0
     - SUBSPACE_PERSISTENT_KEEPALIVE=20
    cap_add:

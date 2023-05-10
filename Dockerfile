@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine as build
+FROM golang:1.19-alpine as build
 
 RUN apk add --no-cache \
     git \
@@ -18,8 +18,10 @@ ENV GODEBUG="netdns=go http2server=0"
 
 RUN make build BUILD_VERSION=${BUILD_VERSION}
 
-FROM alpine:3.13.4
-LABEL maintainer="github.com/subspacecommunity/subspace"
+FROM alpine:3.17.3
+LABEL org.opencontainers.image.source https://github.com/Aparavi-Operations/subspace
+LABEL org.opencontainers.image.description="Subspace - A simple WireGuard VPN server GUI"
+LABEL org.opencontainers.image.licenses=MIT
 
 COPY --from=build  /src/subspace /usr/bin/subspace
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
