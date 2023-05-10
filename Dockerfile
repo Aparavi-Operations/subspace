@@ -19,7 +19,9 @@ ENV GODEBUG="netdns=go http2server=0"
 RUN make build BUILD_VERSION=${BUILD_VERSION}
 
 FROM alpine:3.17.3
-LABEL maintainer="github.com/subspacecommunity/subspace"
+LABEL org.opencontainers.image.source https://github.com/Aparavi-Operations/subspace
+LABEL org.opencontainers.image.description="Subspace - A simple WireGuard VPN server GUI"
+LABEL org.opencontainers.image.licenses=MIT
 
 COPY --from=build  /src/subspace /usr/bin/subspace
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
