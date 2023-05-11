@@ -98,6 +98,11 @@ if [ -z "${SUBSPACE_DISABLE_SNAT-}" ]; then
       if ! /sbin/iptables-nft -t nat --check POSTROUTING -s ${SUBSPACE_IPV4_POOL} -j SNAT --to-source ${SUBSPACE_IPV4_SNAT_SOURCE}; then
         /sbin/iptables-nft -t nat --append POSTROUTING -s ${SUBSPACE_IPV4_POOL} -j SNAT --to-source ${SUBSPACE_IPV4_SNAT_SOURCE}
       fi
+      if [ ! -z "${SUBSPACE_POSTROUTING_SNAT_DESTINATION-}" ]; then
+        if ! /sbin/iptables-nft -t nat --check POSTROUTING -s ${SUBSPACE_IPV4_POOL} -d ${SUBSPACE_POSTROUTING_SNAT_DESTINATION} -j SNAT --to-source ${SUBSPACE_POSTROUTING_SNAT_TO_SOURCE}; then
+          /sbin/iptables-nft -t nat -I POSTROUTING 1 -s ${SUBSPACE_IPV4_POOL} -d ${SUBSPACE_POSTROUTING_SNAT_DESTINATION} -j SNAT --to-source ${SUBSPACE_POSTROUTING_SNAT_TO_SOURCE}
+        fi
+      fi
     fi
 
     if ! /sbin/iptables-nft --check FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT; then
