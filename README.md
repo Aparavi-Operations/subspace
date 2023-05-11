@@ -123,6 +123,8 @@ $ subspace --http-host subspace.example.com
 | `SUBSPACE_IPV6_PREF`        | `fd00::10:97:`      | IPv6 Network preference                                                                                                                              |
 | `SUBSPACE_IPV4_POOL`        | `10.99.97.0/24`     | IPv4 Subnet to use as WireGuard subnet                                                                                                               |
 | `SUBSPACE_IPV6_POOL`        | `fd00::10:97:0/112` | IPv6 Subnet to use as WireGuard subnet                                                                                                               |
+| `SUBSPACE_POSTROUTING_RULE` | `MASQUERADE` or `SNAT` |  Postrouting rule MASQUERADE or SNAT                                                                                                              |
+| `SUBSPACE_IPV4_SNAT_SOURCE` | example `101.11.111.11` | If used SNAT, specify the external ip address                                                                                                    |
 | `SUBSPACE_NAMESERVERS`      | `1.1.1.1,1.0.0.1`   | Nameservers to use, by-default those of Cloudflare.                                                                                                  |
 | `SUBSPACE_LETSENCRYPT`      | `1`                 | Whether or not to use a LetsEncrypt certificate                                                                                                      |
 | `SUBSPACE_HTTP_ADDR`        | `:80`               | HTTP listen address                                                                                                                                  |
@@ -212,8 +214,11 @@ docker create \
     # Optional variables to change IPv4/v6 Gateway
     --env SUBSPACE_IPV4_GW="10.99.97.1" \
     --env SUBSPACE_IPV6_GW="fd00::10:97:1" \
-    # Optional variable to enable or disable IPv6 NAT
-    --env SUBSPACE_IPV6_NAT_ENABLED=1 \
+    # Optional variable to enable or disable IPv4(6) NAT
+    --env SUBSPACE_IPV4_NAT_ENABLED=1 \
+    --env SUBSPACE_IPV6_NAT_ENABLED=0 \
+    # postrouting rule MASQUERADE or SNAT
+    --env SUBSPACE_POSTROUTING_RULE=MASQUERADE \
     # Optional variable to disable DNS server. Enabled by default.
     # consider disabling DNS server, if supporting international VPN clients
     --env SUBSPACE_DISABLE_DNS=0 \
@@ -253,8 +258,10 @@ services:
     - SUBSPACE_IPV4_POOL=10.99.97.0/24
     - SUBSPACE_IPV4_GW=10.99.97.1
     - SUBSPACE_IPV4_NAT_ENABLED=1
-    - SUBSPACE_POSTROUTING_RULE=MASQUERADE # MASQUERADE or SNAT
-    - SUBSPACE_IPV4_SNAT_SOURCE=101.11.111.11 # if SUBSPACE_POSTROUTING_RULE=SNAT, specify the external ip address
+    - SUBSPACE_POSTROUTING_RULE=MASQUERADE # postrouting rule MASQUERADE or SNAT
+    - SUBSPACE_IPV4_SNAT_SOURCE=101.11.111.11 # if used SNAT, specify the external ip address
+    - SUBSPACE_POSTROUTING_SNAT_DESTINATION=10.0.0.0/24 # if you need to allow traffic between LAN when using SNAT
+    - SUBSPACE_POSTROUTING_SNAT_TO_SOURCE=10.0.0.5 # local ip address of the vpn server through which local traffic will go when using SNAT
 
     - 'SUBSPACE_IPV6_PREF=fd00::10:97:'
     - SUBSPACE_IPV6_POOL=fd00::10:97:0/64
