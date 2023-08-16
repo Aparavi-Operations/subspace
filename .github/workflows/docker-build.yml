@@ -10,6 +10,9 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  MEND_URL: https://saas.whitesourcesoftware.com
+  MEND_EMAIL: ${{ secrets.MEND_EMAIL }}
+  MEND_USER_KEY: ${{ secrets.MEND_USER_KEY }}
 
 jobs:
   build-and-push-image:
@@ -42,3 +45,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Download and Install Mend CLI
+        run: curl https://downloads.mend.io/cli/linux_amd64/mend -o /usr/local/bin/mend && sudo chmod +x /usr/local/bin/mend
+
+      - name: Scan Docker Image with Mend CLI
+        run: mend image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
