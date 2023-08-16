@@ -391,7 +391,7 @@ func configureSAML() error {
 		IDPMetadata:       entity,
 		CookieName:        SessionCookieNameSSO,
 		// CookieDomain:      httpHost, // TODO: this will break if using a custom domain.
-		/// CookieSecure:      !httpInsecure,
+		// CookieSecure:      !httpInsecure,
 		// Logger:            logger,
 		AllowIDPInitiated: true,
 	})
