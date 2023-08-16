@@ -28,7 +28,7 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ env.registry }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -50,4 +50,4 @@ jobs:
         run: curl https://downloads.mend.io/cli/linux_amd64/mend -o /usr/local/bin/mend && sudo chmod +x /usr/local/bin/mend
 
       - name: Scan Docker Image with Mend CLI
-        run: mend image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        run: mend image ${{ env.registry }}/${{ steps.meta.outputs.tags }}
