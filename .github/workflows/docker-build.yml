@@ -50,4 +50,4 @@ jobs:
         run: curl https://downloads.mend.io/cli/linux_amd64/mend -o /usr/local/bin/mend && sudo chmod +x /usr/local/bin/mend
 
       - name: Scan Docker Image with Mend CLI
-        run: mend image ${{ env.registry }}/${{ env.image_name }}
+        run: mend image ${{ env.registry }}/${{ github.repository }}:${{ env.git_tag }}
