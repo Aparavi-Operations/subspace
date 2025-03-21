@@ -1,12 +1,13 @@
 module github.com/subspacecommunity/subspace
 
 go 1.14
+
 require (
 	github.com/beevik/etree v1.2.0 // indirect
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/crewjam/saml v0.4.13
 	github.com/dustin/go-humanize v1.0.1
-	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
 	github.com/gorilla/securecookie v1.1.1
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/jteeuwen/go-bindata v3.0.8-0.20180305030458-6025e8de665b+incompatible
